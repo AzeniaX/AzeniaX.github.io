@@ -1,0 +1,243 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>CTF笔记 MISC#2 流量分析工具(Wireshark)简单使用总结&amp;PNG格式标准 | Azenix's Blog</title><meta name="author" content="Azenix"><meta name="copyright" content="Azenix"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="对Wireshark工具部分使用套路整理，补充PNG图片编码格式解析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CTF笔记 MISC#2 流量分析工具(Wireshark)简单使用总结&amp;PNG格式标准">
+<meta property="og:url" content="http://azenix.icu/2023/11/26/MISC_2/index.html">
+<meta property="og:site_name" content="Azenix&#39;s Blog">
+<meta property="og:description" content="对Wireshark工具部分使用套路整理，补充PNG图片编码格式解析">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/11/26/GgzF6XrZW3udnEN.png">
+<meta property="article:published_time" content="2023-11-25T16:47:48.000Z">
+<meta property="article:modified_time" content="2023-11-25T17:38:27.143Z">
+<meta property="article:author" content="Azenix">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="MISC">
+<meta property="article:tag" content="PNG隐写">
+<meta property="article:tag" content="Wireshark">
+<meta property="article:tag" content="流量分析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/11/26/GgzF6XrZW3udnEN.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://azenix.icu/2023/11/26/MISC_2/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CTF笔记 MISC#2 流量分析工具(Wireshark)简单使用总结&PNG格式标准',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-11-26 01:38:27'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2022/12/17/kZTNg7zwUe8J1Oq.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/resource/"><i class="fa-fw fas fa-box"></i><span> 资源</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heartbeat"></i><span> 娱乐</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/MUG/"><i class="fa-fw fas fa-gamepad"></i><span> 音游</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2023/11/26/GgzF6XrZW3udnEN.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Azenix's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/resource/"><i class="fa-fw fas fa-box"></i><span> 资源</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heartbeat"></i><span> 娱乐</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/MUG/"><i class="fa-fw fas fa-gamepad"></i><span> 音游</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CTF笔记 MISC#2 流量分析工具(Wireshark)简单使用总结&amp;PNG格式标准</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-11-25T16:47:48.000Z" title="发表于 2023-11-26 00:47:48">2023-11-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-11-25T17:38:27.143Z" title="更新于 2023-11-26 01:38:27">2023-11-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/">CTF</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="CTF笔记 MISC#2 流量分析工具(Wireshark)简单使用总结&amp;PNG格式标准"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/2023/11/26/MISC_2/#post-comment" itemprop="discussionUrl"><span class="valine-comment-count" data-xid="/2023/11/26/MISC_2/" itemprop="commentCount"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="流量分析工具-Wireshark"><a href="#流量分析工具-Wireshark" class="headerlink" title="流量分析工具(Wireshark)"></a>流量分析工具(Wireshark)</h2><p>在CTF比赛中的MISC的类别下，流量分析是一项十分重要的考察方向。</p>
+<p>通常比赛中会提供一个流量数据包文件(PCAP&#x2F;PCAPNG)，让选手对该数据包分析来获得flag。</p>
+<p>Wireshark是目前使用最广泛功能基本上最强大的开源网络封包分析软件，也叫小鲨鱼。</p>
+<p>Wireshark可以用来抓取流量包也可以用来对抓取到的流量包(pcap&#x2F;pcapng文件)进行解析。</p>
+<p>CTF比赛中，一般使用Wireshark解决流量分析类题目。</p>
+<h3 id="界面"><a href="#界面" class="headerlink" title="界面"></a>界面</h3><p><img src="https://s2.loli.net/2023/11/26/GgzF6XrZW3udnEN.png" alt="wireshark界面.png"></p>
+<p>开始抓包或者将一个已经打包好的流量包文件使用Wireshark打开后便会出现这样的界面。</p>
+<p>其中，过滤栏、数据列表、数据包详情、原始数据四部分最为重要。</p>
+<p>在数据列表中，各类型的数据包会被着上如下所示的不同颜色，可以方便我们快速判断数据包类别。</p>
+<p><img src="https://s2.loli.net/2023/11/26/H3TM8aBJLluzisj.png" alt="image-20231118145822008.png"></p>
+<h3 id="过滤器-过滤栏"><a href="#过滤器-过滤栏" class="headerlink" title="过滤器(过滤栏)"></a>过滤器(过滤栏)</h3><p>初使用wireshark时，由于目前计算机网络会在同时段内进行大量的数据交互，你将会得到大量的冗余数据包列表，以至于很难找到自己真正需要的数据包部分。</p>
+<p>而流量分析题目最复杂的地方，便是靠大量冗余数据包进行混淆而使得真正包含flag相关内容的数据包被隐藏。这对选手的分类过滤流量包能力进行了挑战。</p>
+<p>因此，学习解答流量分析类题目的第一步便是要学会如何使用Wireshark的过滤器。</p>
+<h4 id="基本格式"><a href="#基本格式" class="headerlink" title="基本格式"></a>基本格式</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[not] Expression [and|or] [not] Expression</span><br></pre></td></tr></table></figure>
+
+<h4 id="比较运算符"><a href="#比较运算符" class="headerlink" title="比较运算符"></a>比较运算符</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">== 等于</span><br><span class="line">!= 不等于</span><br><span class="line">&gt; 大于</span><br><span class="line">&lt; 小于</span><br><span class="line">&gt;= 大于等于</span><br><span class="line">&lt;= 小于等于</span><br></pre></td></tr></table></figure>
+
+<h4 id="逻辑运算符-可以用于连接多条语句或元素"><a href="#逻辑运算符-可以用于连接多条语句或元素" class="headerlink" title="逻辑运算符(可以用于连接多条语句或元素)"></a>逻辑运算符(可以用于连接多条语句或元素)</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">and , &amp;&amp;  <span class="comment">#与</span></span><br><span class="line">or , ||   <span class="comment">#或</span></span><br><span class="line">! , not   <span class="comment">#非</span></span><br><span class="line">contains  <span class="comment">#包含</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="协议过滤-直接输入小写协议名称"><a href="#协议过滤-直接输入小写协议名称" class="headerlink" title="协议过滤(直接输入小写协议名称)"></a>协议过滤(直接输入小写协议名称)</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tcp    <span class="comment">#筛选协议为tcp的流量包</span></span><br><span class="line">udp    <span class="comment">#筛选协议为udp的流量包</span></span><br><span class="line">arp/icmp/http/ftp/dns/ip </span><br><span class="line"><span class="comment">#筛选协议为arp/icmp/http/ftp/dns/ip的流量包</span></span><br><span class="line"><span class="comment">#可用 !或者not 加协议表示排除该协议</span></span><br><span class="line">not arp 或 !arp</span><br></pre></td></tr></table></figure>
+
+<h4 id="描述符"><a href="#描述符" class="headerlink" title="描述符"></a>描述符</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">host  <span class="comment">#主机</span></span><br><span class="line">net   <span class="comment">#网络</span></span><br><span class="line">port  <span class="comment">#端口</span></span><br><span class="line">src   <span class="comment">#源</span></span><br><span class="line">dst   <span class="comment">#目标</span></span><br><span class="line">addr  <span class="comment">#地址</span></span><br><span class="line">eth   <span class="comment">#mac地址(Ethernet)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#特殊描述符</span></span><br><span class="line">len/length   <span class="comment">#长度</span></span><br><span class="line">request  <span class="comment">#请求</span></span><br><span class="line">method   <span class="comment">#方法</span></span><br><span class="line">request.method  <span class="comment">#请求方法</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h4 id="用例"><a href="#用例" class="headerlink" title="用例"></a>用例</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ip.src == 地址     <span class="comment">#源ip筛选</span></span><br><span class="line">ip.dst == 地址     <span class="comment">#目标ip筛选</span></span><br><span class="line">ip.addr == 地址    <span class="comment">#ip地址筛选</span></span><br><span class="line"></span><br><span class="line">udp.srcport == 80 <span class="comment">#筛选udp协议的源端口为80的流量包</span></span><br><span class="line">eth.dst == A0:00:00:04:C5:84 <span class="comment">#目标mac地址筛选</span></span><br><span class="line"></span><br><span class="line">http.request.method ==<span class="string">&quot;POST&quot;</span>  <span class="comment">#筛选HTTP请求方法为POST的流量包</span></span><br><span class="line">http contains <span class="string">&quot;FLAG&quot;</span>          <span class="comment">#筛选HTTP内容为/FLAG的流量包</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="常用表达式"><a href="#常用表达式" class="headerlink" title="常用表达式"></a>常用表达式</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#数据链路层</span></span><br><span class="line"></span><br><span class="line">eth.dst == A0:00:00:04:C5:84 <span class="comment">#目标mac地址筛选 </span></span><br><span class="line"></span><br><span class="line"><span class="comment">#网络层：</span></span><br><span class="line"></span><br><span class="line">ip.addr == 192.168.1.1       <span class="comment">#筛选ip地址为192.168.1.1的数据包</span></span><br><span class="line"></span><br><span class="line">ip contains <span class="string">&quot;192.168.1&quot;</span>      <span class="comment">#筛选192.168.1.0网段的数据</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#传输层：</span></span><br><span class="line"></span><br><span class="line">tcp.port == 80               <span class="comment">#筛选tcp端口为80的数据包</span></span><br><span class="line"></span><br><span class="line">tcp.srcport == 12345 &amp;&amp; tcp.dstport == 80  <span class="comment">#筛选从12345端口到80端口的数据包</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#应用层：</span></span><br><span class="line"></span><br><span class="line">http.request.uri contains <span class="string">&quot;.php&quot;</span>      <span class="comment">#筛选url中包含.php的http数据包</span></span><br><span class="line"></span><br><span class="line">http contains <span class="string">&quot;username&quot;</span>              <span class="comment">#筛选内容包含username的http数据包</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>需要特别注意的是：</strong></p>
+<p>http协议的语句中</p>
+<p>http.request表示请求头中的第一行   （如GET index.jsp HTTP&#x2F;1.1）<br>http.response表示响应头中的第一行（如HTTP&#x2F;1.1 200 OK）<br>其他头部都用http.header_name形式</p>
+<h4 id="实际用例"><a href="#实际用例" class="headerlink" title="实际用例"></a>实际用例</h4><p><img src="https://s2.loli.net/2023/11/26/5KeQXNVOZ249UjT.png" alt="image-20231118153817872.png"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip.dst == 210.30.97.133 and http</span><br><span class="line"><span class="comment">#筛选 目标 IP 地址为 &quot;210.30.97.133&quot; 且 协议为 HTTP</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="直接选中过滤"><a href="#直接选中过滤" class="headerlink" title="直接选中过滤"></a>直接选中过滤</h3><p><img src="https://s2.loli.net/2023/11/26/XVU5jPcMe7AIF61.png" alt="image-20231118154209615.png"></p>
+<p>也可直接点选后作为过滤器应用</p>
+<h3 id="数据包还原"><a href="#数据包还原" class="headerlink" title="数据包还原"></a>数据包还原</h3><p>Wireshark还具有一个追踪数据流的功能，它可以将分散的HTTP或TCP流量集合在一起并还原出原始数据。</p>
+<p><img src="https://s2.loli.net/2023/11/26/DuJUjgaGmCNSMnA.png" alt="image-20231118160003579.png"></p>
+<p>右键点击需要追踪的数据流中的其中一条，选择追踪流 —— (TCP 流&#x2F; UPD 流&#x2F; SSL 流&#x2F; HTTP 流)</p>
+<p><img src="https://s2.loli.net/2023/11/26/AXLUpBdJZeMnaHr.png" alt="image-20231118160124584.png"></p>
+<p>即可还原出整条完整的数据包流</p>
+<h3 id="数据提取"><a href="#数据提取" class="headerlink" title="数据提取"></a>数据提取</h3><p>Wireshark 还支持对于通过 HTTP 协议传输的文件内容进行提取</p>
+<p>文件——导出对象——选择HTTP流</p>
+<p>Wireshark会自动识别可导出的传输的文件和文件类型，如果Wireshark识别不了则需要我们手动处理</p>
+<p><img src="https://s2.loli.net/2023/11/26/7iIRAkFCX3GPf1p.png" alt="image-20231118162032926.png"></p>
+<h2 id="图片隐写补充"><a href="#图片隐写补充" class="headerlink" title="图片隐写补充"></a>图片隐写补充</h2><p>在上一篇文章中已经介绍了几种图片隐写，本次补充一些内容</p>
+<h3 id="EXIF信息"><a href="#EXIF信息" class="headerlink" title="EXIF信息"></a>EXIF信息</h3><p>简单来说，<em>Exif 信息</em>是数码相机(或智能手机)在拍摄过程中采集的一系列的信息，它一般会放在照片文件的头部，使用010editor可以查看或直接在Windows下右键图片查看详细信息</p>
+<p>严格意义上，EXIF信息不算隐写术，但题目中经常将一些隐藏的信息写入EXIF</p>
+<p><img src="https://s2.loli.net/2023/11/26/RGrJ8Que4ntBY72.png" alt="image-20231118164015253.png"></p>
+<h3 id="PNG文件标准"><a href="#PNG文件标准" class="headerlink" title="PNG文件标准"></a>PNG文件标准</h3><p>PNG文件以它本身的性质成为了CTF竞赛中图片隐写题的常客，因此了解PNG文件的标准是有必要的。</p>
+<p>参考来源：<a target="_blank" rel="noopener" href="https://article.itxueyuan.com/9qlyPW">PNG文件格式详解</a></p>
+<blockquote>
+<p>PNG是20世纪90年代中期开始开发的图像文件存储格式，其目的是替代GIF和TIFF文件格式，同时增加一些GIF文件格式所不具备的特性。流式网络图形格式(Portable Network Graphic Format，PNG)名称来源于非官方的“PNG’s Not GIF”，是一种位图文件(bitmap file)存储格式，读成“ping”。</p>
+</blockquote>
+<p>PNG图像格式文件由文件署名和数据块(chunk)组成，其中每个数据块都由下表所示的的4个域组成。</p>
+<p><img src="https://s2.loli.net/2023/11/26/4S1kfLV56KIaQmq.png" alt="image-20231118164232133.png"></p>
+<p>其中最后四字节是使用CRC-32算法对Chunk Type Code域和Chunk Data域中的数据进行计算得到的，是一种校验码，可以检测数据是否损坏或被篡改过。</p>
+<p><a target="_blank" rel="noopener" href="http://www.ip33.com/crc.html">CRC(循环冗余校验)在线计算</a></p>
+<h5 id="关键数据块"><a href="#关键数据块" class="headerlink" title="关键数据块"></a>关键数据块</h5><p>PNG文件拥有4个标准的关键数据块，分别是文件头数据块IHDR(header chunk)，调色板数据块PLTE(palette chunk)，图像数据块IDAT(image data chunk)以及图像结束数据IEND(image trailer chunk)，这四个数据库对于每个PNG文件都是必不可少的，而多数PNG的图片隐写题也是对这四个数据块进行修改。</p>
+<h5 id="文件头数据块IHDR-header-chunk-："><a href="#文件头数据块IHDR-header-chunk-：" class="headerlink" title="文件头数据块IHDR(header chunk)："></a>文件头数据块IHDR(header chunk)：</h5><p>IHDR包含有PNG文件中存储的图像数据的基本信息，并要作为第一个数据块出现在PNG数据流中，而且一个PNG数据流中只能有一个文件头数据块。文件头数据块固定长度为13字节，组成结构如下：</p>
+<p><img src="https://s2.loli.net/2023/11/26/oAByniEZg4PVdDw.png" alt="image-20231118164815903.png"></p>
+<p>其中Width和Height两项数据可以被篡改，于是就有了宽高隐写类型题目。</p>
+<p><strong>调色板数据块PLTE(palette chunk)重要程度较低，此处暂且按下不表。</strong></p>
+<h5 id="图像数据块IDAT-image-data-chunk"><a href="#图像数据块IDAT-image-data-chunk" class="headerlink" title="图像数据块IDAT(image data chunk)"></a>图像数据块IDAT(image data chunk)</h5><p>存储实际的数据，在数据流中可包含多个连续顺序的图像数据块。</p>
+<h5 id="图像结束数据IEND-image-trailer-chunk"><a href="#图像结束数据IEND-image-trailer-chunk" class="headerlink" title="图像结束数据IEND(image trailer chunk)"></a>图像结束数据IEND(image trailer chunk)</h5><p>它用来标记PNG文件或者数据流已经结束，并且必须要放在文件的尾部。</p>
+<p>并且它总是为以下的12字符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">00 00 00 00 49 45 4E 44 AE 42 60 82</span><br></pre></td></tr></table></figure>
+
+<p>不难明白，由于数据块结构的定义，IEND数据块的长度总是0（00 00 00 00，除非人为加入信息），数据标识总是IEND（49 45 4E 44），因此，CRC码也总是AE 42 60 82。</p>
+<p>最后，除了表示数据块开始的IHDR必须放在最前面， 表示PNG文件结束的IEND数据块放在最后面之外，其他数据块的存放顺序没有限制。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://azenix.icu">Azenix</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://azenix.icu/2023/11/26/MISC_2/">http://azenix.icu/2023/11/26/MISC_2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://azenix.icu" target="_blank">Azenix's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CTF/">CTF</a><a class="post-meta__tags" href="/tags/MISC/">MISC</a><a class="post-meta__tags" href="/tags/PNG%E9%9A%90%E5%86%99/">PNG隐写</a><a class="post-meta__tags" href="/tags/Wireshark/">Wireshark</a><a class="post-meta__tags" href="/tags/%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/">流量分析</a></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2023/11/26/GgzF6XrZW3udnEN.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/10/28/MISC_1/"><img class="next-cover" src="https://s2.loli.net/2023/10/28/SQosCKNuHI7mpl3.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CTF笔记 MISC#1 从第一次MISC出题开始——PNG图片隐写部分思路和原理</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/10/28/MISC_1/" title="CTF笔记 MISC#1 从第一次MISC出题开始——PNG图片隐写部分思路和原理"><img class="cover" src="https://s2.loli.net/2023/10/28/SQosCKNuHI7mpl3.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-28</div><div class="title">CTF笔记 MISC#1 从第一次MISC出题开始——PNG图片隐写部分思路和原理</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2022/12/17/kZTNg7zwUe8J1Oq.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Azenix</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/azeniax"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">Azenix的个人博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7-Wireshark"><span class="toc-number">1.</span> <span class="toc-text">流量分析工具(Wireshark)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2"><span class="toc-number">1.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E5%99%A8-%E8%BF%87%E6%BB%A4%E6%A0%8F"><span class="toc-number">1.2.</span> <span class="toc-text">过滤器(过滤栏)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.2.1.</span> <span class="toc-text">基本格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">1.2.2.</span> <span class="toc-text">比较运算符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6-%E5%8F%AF%E4%BB%A5%E7%94%A8%E4%BA%8E%E8%BF%9E%E6%8E%A5%E5%A4%9A%E6%9D%A1%E8%AF%AD%E5%8F%A5%E6%88%96%E5%85%83%E7%B4%A0"><span class="toc-number">1.2.3.</span> <span class="toc-text">逻辑运算符(可以用于连接多条语句或元素)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE%E8%BF%87%E6%BB%A4-%E7%9B%B4%E6%8E%A5%E8%BE%93%E5%85%A5%E5%B0%8F%E5%86%99%E5%8D%8F%E8%AE%AE%E5%90%8D%E7%A7%B0"><span class="toc-number">1.2.4.</span> <span class="toc-text">协议过滤(直接输入小写协议名称)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="toc-number">1.2.5.</span> <span class="toc-text">描述符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%A8%E4%BE%8B"><span class="toc-number">1.2.6.</span> <span class="toc-text">用例</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.2.7.</span> <span class="toc-text">常用表达式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E7%94%A8%E4%BE%8B"><span class="toc-number">1.2.8.</span> <span class="toc-text">实际用例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E9%80%89%E4%B8%AD%E8%BF%87%E6%BB%A4"><span class="toc-number">1.3.</span> <span class="toc-text">直接选中过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8C%85%E8%BF%98%E5%8E%9F"><span class="toc-number">1.4.</span> <span class="toc-text">数据包还原</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%8F%90%E5%8F%96"><span class="toc-number">1.5.</span> <span class="toc-text">数据提取</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BE%E7%89%87%E9%9A%90%E5%86%99%E8%A1%A5%E5%85%85"><span class="toc-number">2.</span> <span class="toc-text">图片隐写补充</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#EXIF%E4%BF%A1%E6%81%AF"><span class="toc-number">2.1.</span> <span class="toc-text">EXIF信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PNG%E6%96%87%E4%BB%B6%E6%A0%87%E5%87%86"><span class="toc-number">2.2.</span> <span class="toc-text">PNG文件标准</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%95%B0%E6%8D%AE%E5%9D%97"><span class="toc-number">2.2.0.1.</span> <span class="toc-text">关键数据块</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%A4%B4%E6%95%B0%E6%8D%AE%E5%9D%97IHDR-header-chunk-%EF%BC%9A"><span class="toc-number">2.2.0.2.</span> <span class="toc-text">文件头数据块IHDR(header chunk)：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9B%BE%E5%83%8F%E6%95%B0%E6%8D%AE%E5%9D%97IDAT-image-data-chunk"><span class="toc-number">2.2.0.3.</span> <span class="toc-text">图像数据块IDAT(image data chunk)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9B%BE%E5%83%8F%E7%BB%93%E6%9D%9F%E6%95%B0%E6%8D%AEIEND-image-trailer-chunk"><span class="toc-number">2.2.0.4.</span> <span class="toc-text">图像结束数据IEND(image trailer chunk)</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/11/26/MISC_2/" title="CTF笔记 MISC#2 流量分析工具(Wireshark)简单使用总结&amp;PNG格式标准"><img src="https://s2.loli.net/2023/11/26/GgzF6XrZW3udnEN.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CTF笔记 MISC#2 流量分析工具(Wireshark)简单使用总结&amp;PNG格式标准"/></a><div class="content"><a class="title" href="/2023/11/26/MISC_2/" title="CTF笔记 MISC#2 流量分析工具(Wireshark)简单使用总结&amp;PNG格式标准">CTF笔记 MISC#2 流量分析工具(Wireshark)简单使用总结&amp;PNG格式标准</a><time datetime="2023-11-25T16:47:48.000Z" title="发表于 2023-11-26 00:47:48">2023-11-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/28/MISC_1/" title="CTF笔记 MISC#1 从第一次MISC出题开始——PNG图片隐写部分思路和原理"><img src="https://s2.loli.net/2023/10/28/SQosCKNuHI7mpl3.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CTF笔记 MISC#1 从第一次MISC出题开始——PNG图片隐写部分思路和原理"/></a><div class="content"><a class="title" href="/2023/10/28/MISC_1/" title="CTF笔记 MISC#1 从第一次MISC出题开始——PNG图片隐写部分思路和原理">CTF笔记 MISC#1 从第一次MISC出题开始——PNG图片隐写部分思路和原理</a><time datetime="2023-10-28T04:50:55.000Z" title="发表于 2023-10-28 12:50:55">2023-10-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/17/myownwebsite/" title="个人网站搭建过程(免费) 使用Hexo+GitHub pages框架"><img src="https://s2.loli.net/2022/12/17/3LsVBMoAliJ6IPy.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="个人网站搭建过程(免费) 使用Hexo+GitHub pages框架"/></a><div class="content"><a class="title" href="/2022/12/17/myownwebsite/" title="个人网站搭建过程(免费) 使用Hexo+GitHub pages框架">个人网站搭建过程(免费) 使用Hexo+GitHub pages框架</a><time datetime="2022-12-17T12:19:55.000Z" title="发表于 2022-12-17 20:19:55">2022-12-17</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By Azenix</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'GzKywL1MGOAg5yWOeH9lTbjg-gzGzoHsz',
+      appKey: 'KimoCHmg9dqQfnDtqcfR4sYV',
+      avatar: 'mp',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
